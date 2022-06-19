@@ -1,6 +1,7 @@
 from datetime import datetime
+import re
 
-date = datetime.now()
+
 
 
 
@@ -22,7 +23,7 @@ class Account:
         if amount<=0:
             return f"deposit amount is greater than zero"
         else:
-            my_details= {"date":date.strftime("%d,%m,%H"),"amount":amount,"narration":"thankyou for depositing"}
+            my_details= {"date":datetime.now().strftime("%d,%m,%H"),"amount":amount,"narration":f"thankyou for depositing {amount} on {datetime.now()}"}
             self.deposit.append(my_details)
             
             self.balance+=amount
@@ -37,7 +38,7 @@ class Account:
         elif amount<=0:
             return f"amount must be greater than 0"
         else:
-            details= {"date":date.strftime("%d,%m,%H"),"amount":amount,"narration":"thank you,for withdrawing "}
+            details= {"date":datetime.now().strftime("%d,%m,%H"),"amount":amount,"narration":f"thank you,for withdrawing {amount} at {datetime.now()}"}
             self.withdraw.append(details) 
             
             self.balance-=amount
@@ -85,10 +86,43 @@ class Account:
             return f"Dear {self.name} you still have a balance of {self.loan_balance}, hence repay to borrow"
         else:
             interest = amount*0.03
+            self.loan_balance+=amount+interest
+            return f"Dear {self.name} you have borrowed {self.loan_balance} and your balance is {self.balance}"
+#Add a loan repayment method with these conditions
+#A customer can repay a loan to reduce the current loan balance
+#Overpayment of a loan increases a customers current deposit
+    def loan_repayment(self,amount):
+        if amount<0:
+            return "amount is invalid " 
+        if amount > self.loan_balance:
+            self.balance+=amount-self.loan_balance
+            return f"Dear {self.name}thank you for repaying your loan of {amount-self.loan_balance} and your account balance is {self.balance}"
+        
+        else:
+            self.loan_balance-=amount
+            return f"Dear {self.balance} thank you, you've loan of {amount} and your current loan balance is {self.loan_balance}"
             
+            
+   
+#Add a new method transfer which accepts two attributes (amount and instance of another account). 
+# If the amount is less than the current instances balance, the method transfers the requested
+# amount from the current account to the passed account. The transfer is accomplished by reducing 
+# the current account balance and depositing the requested amount to the passed account.
+    def transfer(self,amount,instance_account):
+        if amount<=0:
+            return f"invalid"
+        if amount>= self.balance:
+            return f"insufficient amount in your account"
+        if isinstance(instance_account,Account):
+            self.balance-=amount
+            instance_account.balance += amount
+            return f"you have transfered {amount} to {instance_account} account with the name {instance_account.name} and your new balance is {self.balance}"
+            
+   
+
         
             
-        
+         
        
             
     
